@@ -39,6 +39,6 @@ for image in images:
         pdf.add_page()
         pdf.image(image, 0, 0, width_in, height_in)
 
-    pdf.output(pdf_filename, "F")
+        pdf.output(pdf_filename, "F")
 
     i = i + 1
