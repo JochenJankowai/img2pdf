@@ -3,7 +3,7 @@ from fpdf import FPDF
 import argparse
 import glob
 from PIL import Image
-from colorama import init, Fore, Back, Style
+from colorama import init, Fore, Style
 
 
 parser = argparse.ArgumentParser()
@@ -32,7 +32,9 @@ for image in images:
     absolute_path = os.path.dirname(os.path.abspath(image))
     pdf_filename = absolute_path + '/' + os.path.splitext(os.path.basename(image))[0] + ".pdf"
 
-    print("Generating PDF file (" + Fore.MAGENTA + Style.BRIGHT + str(i + 1) + Style.NORMAL + Fore.CYAN + "/" + Fore.MAGENTA + str(num_images) + Fore.CYAN + "): " + pdf_filename)
+    space = ((i+1) / 10) < 0.98
+
+    print("Generating PDF file (" + (" " if space else "") + Fore.MAGENTA + Style.BRIGHT + str(i + 1) + Style.NORMAL + Fore.CYAN + "/" + Fore.MAGENTA + str(num_images) + Fore.CYAN + "): " + pdf_filename)
 
     with Image.open(image) as img:
         width_px, height_px = img.size
