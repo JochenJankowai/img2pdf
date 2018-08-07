@@ -48,3 +48,5 @@ for image in images:
         pdf.output(pdf_filename, "F")
 
     i = i + 1
+
+print(Style.RESET_ALL)
