@@ -4,7 +4,7 @@ import argparse
 import glob
 from PIL import Image
 from colorama import init, Fore, Style
-
+import subprocess
 
 parser = argparse.ArgumentParser()
 parser.add_argument("path", type=str)
@@ -31,6 +31,7 @@ print("__________________________________________________\n")
 for image in images:
     absolute_path = os.path.dirname(os.path.abspath(image))
     pdf_filename = absolute_path + '/' + os.path.splitext(os.path.basename(image))[0] + ".pdf"
+    ps_filename = absolute_path + '/' + os.path.splitext(os.path.basename(image))[0] + ".ps"
 
     space = ((i+1) / 10) < 0.98
 
@@ -48,5 +49,11 @@ for image in images:
         pdf.output(pdf_filename, "F")
 
     i = i + 1
+
+    # We need to convert the PDF to PS and back because of some meta data that is added by FPDF which Latex doesn't like
+    subprocess.check_output(['pdf2ps', pdf_filename, ps_filename])
+
+    subprocess.check_output(['ps2pdf', ps_filename, pdf_filename])
+
 
 print(Style.RESET_ALL)
