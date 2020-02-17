@@ -33,8 +33,8 @@ for image in images:
     folder_name = os.path.split(absolute_path)[1]
     pdf_filename = os.path.splitext(os.path.basename(image))[0] + ".pdf"
     ps_filename = os.path.splitext(os.path.basename(image))[0] + ".ps"
-    absolute_pdf_filename = absolute_path + '/' + pdf_filename
-    absolute_ps_filename = absolute_path + '/' + ps_filename
+    absolute_pdf_filename = os.path.sep.join([absolute_path,pdf_filename])
+    absolute_ps_filename = os.path.sep.join([absolute_path,ps_filename])
 
     space = ((i+1) / 10) < 0.98
 
