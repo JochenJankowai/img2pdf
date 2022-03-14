@@ -5,10 +5,12 @@ import glob
 from PIL import Image
 from colorama import init, Fore, Style
 import subprocess
+import math
 
 parser = argparse.ArgumentParser()
 parser.add_argument("path", type=str)
 parser.add_argument("dpi", type=int)
+parser.add_argument("override", type=int)
 args = parser.parse_args()
 
 init()
@@ -29,6 +31,8 @@ print(Style.BRIGHT + "Converting " + str(num_images) +
       " images to PDFs at a quality of " + str(args.dpi) + "DPI." + Style.NORMAL)
 print("____________________________________________________\n")
 
+max_spaces = math.floor(math.log10(len(images)))
+
 for image in images:
     absolute_path = os.path.dirname(os.path.abspath(image))
     folder_name = os.path.split(absolute_path)[1]
@@ -37,14 +41,18 @@ for image in images:
     absolute_pdf_filename = os.path.sep.join([absolute_path, pdf_filename])
     absolute_ps_filename = os.path.sep.join([absolute_path, ps_filename])
 
-    space = ((i+1) / 10) < 0.98
+    spaces = max_spaces-math.floor(math.log10(i+1))
+    space = ''
+    for p in range(0, spaces):
+        space = space + ' '
 
-    if os.path.exists(absolute_pdf_filename):
-        print(Fore.YELLOW + "Already converted, skipping.")
+    if os.path.exists(absolute_pdf_filename) and args.override == 0:
+        print(Fore.YELLOW + "File (" + space + Fore.MAGENTA + Style.BRIGHT + str(i + 1) + Style.NORMAL
+              + Fore.YELLOW + "/" + Fore.MAGENTA + str(num_images) + Fore.YELLOW + "): " + Fore.YELLOW + Style.NORMAL + folder_name + "/" + pdf_filename + " already exists.")
         i = i + 1
         continue
 
-    print("Generating PDF file (" + (" " if space else "") + Fore.MAGENTA + Style.BRIGHT + str(i + 1) + Style.NORMAL
+    print("Generating PDF file (" + space + Fore.MAGENTA + Style.BRIGHT + str(i + 1) + Style.NORMAL
           + Fore.CYAN + "/" + Fore.MAGENTA + str(num_images) + Fore.CYAN + "): " + folder_name + "/" + pdf_filename)
 
     try:
@@ -73,7 +81,7 @@ for image in images:
         print(Fore.CYAN)
     except FileNotFoundError as e:
         print(Fore.YELLOW + Style.NORMAL)
-        print("Warn")
+        print(e)
         print(Fore.CYAN)
     finally:
         i = i + 1
