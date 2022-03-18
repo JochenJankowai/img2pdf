@@ -1,5 +1,5 @@
 import os
-from platform import platform
+import platform
 from fpdf import FPDF
 import argparse
 import glob
