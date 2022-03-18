@@ -1,4 +1,5 @@
 import os
+from platform import platform
 from fpdf import FPDF
 import argparse
 import glob
@@ -55,19 +56,19 @@ for image in images:
     print("Generating PDF file (" + space + Fore.MAGENTA + Style.BRIGHT + str(i + 1) + Style.NORMAL
           + Fore.CYAN + "/" + Fore.MAGENTA + str(num_images) + Fore.CYAN + "): " + folder_name + "/" + pdf_filename)
 
-    try:
-        with Image.open(str(image), "r") as img:
-            width_px, height_px = img.size
-            width_in = width_px/args.dpi
-            height_in = height_px/args.dpi
+    with Image.open(str(image), "r") as img:
+        width_px, height_px = img.size
+        width_in = width_px/args.dpi
+        height_in = height_px/args.dpi
 
-            pdf = FPDF(unit='in', format=tuple((width_in, height_in)))
-            pdf.add_page()
-            pdf.image(image, 0, 0, width_in, height_in)
+        pdf = FPDF(unit='in', format=tuple((width_in, height_in)))
+        pdf.add_page()
+        pdf.image(image, 0, 0, width_in, height_in)
 
-            pdf.output(absolute_pdf_filename, "F")
+        pdf.output(absolute_pdf_filename, "F")
 
-        # We need to convert the PDF to PS and back because of some meta data that is added by FPDF which Latex doesn't like
+    # We need to convert the PDF to PS and back because of some meta data that is added by FPDF which Latex doesn't like
+    if platform.system() == 'Linux':
         subprocess.check_output(
             ['pdf2ps', absolute_pdf_filename, absolute_ps_filename])
 
@@ -75,16 +76,8 @@ for image in images:
             ['ps2pdf', absolute_ps_filename, absolute_pdf_filename])
 
         subprocess.check_output(['rm', absolute_ps_filename])
-    except RuntimeError as e:
-        print(Fore.RED)
-        print(e)
-        print(Fore.CYAN)
-    except FileNotFoundError as e:
-        print(Fore.YELLOW + Style.NORMAL)
-        print(e)
-        print(Fore.CYAN)
-    finally:
-        i = i + 1
+
+    i = i + 1
 
 
 print(Style.RESET_ALL)
